@@ -2,27 +2,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/salas.h"
+#include "../include/conexiones.h"
 
 int main()
 {
     v_salas sala;
     cargarSalas(&sala);
     imprimirSalas(sala);
-
-    v_conexiones cnx;
-    cargarConexiones(&cnx);
-    imprimirConexiones(cnx);
+    //guardarSala(sala);
+    describirSala(sala.sala[1]);
 }
 
-void entrarSala(t_sala, t_conexion)
-{
-
-}
-
-int comprobarConexion(t_conexion, int)
-{
-
-}
 
 void cargarSalas(v_salas *salas)
 {
@@ -35,9 +25,9 @@ void cargarSalas(v_salas *salas)
     while(fgets(linea, 250, f) != NULL){
         salas->sala = realloc(salas->sala, (i+1) * sizeof(t_sala));
 
-        salas->sala[i].id = atoi(strtok(linea,"-"));
-        strcpy(salas->sala[i].nombre, strtok(NULL,"-"));
-        salas->sala[i].tipo = (strtok(NULL, "-"))[0];       //[0] porque devuelve puntero (vector)
+        salas->sala[i].id = atoi(strtok(linea,"-"));        // Entero
+        strcpy(salas->sala[i].nombre, strtok(NULL,"-"));    // String
+        salas->sala[i].tipo = (strtok(NULL, "-"))[0];       // Caracter : [0] porque devuelve puntero (vector)
         strcpy(salas->sala[i].desc, strtok(NULL,"-"));
         i++;
     }
@@ -57,40 +47,9 @@ void guardarSalas(v_salas salas)
     fclose(f);
 }
 
-void cargarConexiones(v_conexiones *conx)
+void entrarSala(t_sala, t_conexion)             // Añadir t_jugador
 {
-    FILE *f = fopen("../ficheros/conexiones.txt", "r");
-    if(f == NULL) {printf("Error: Archivo nulo"); return;}
-    char linea[250];
-    int i=0;
-    conx->conexion = NULL;
 
-    conx->conexion = (t_conexion*) malloc(i * sizeof(t_conexion));
-
-    while(fgets(linea, 250, f) != NULL){
-        conx->conexion = realloc(conx->conexion, (i+1) * sizeof(t_conexion));
-
-        strcpy(conx->conexion[i].id_cnx, strtok(linea,"-"));
-        conx->conexion[i].id_org = atoi(strtok(NULL,"-"));
-        conx->conexion[i].id_dst = atoi(strtok(NULL,"-"));
-        conx->conexion[i].estado = atoi(strtok(NULL,"-"));
-        strcpy(conx->conexion[i].cond, strtok(NULL,"-"));
-        i++;
-    }
-    conx->num_conexiones = i;
-    
-    fclose(f);
-}
-
-void guardarConexiones(v_conexiones conx)
-{
-    FILE *f = fopen("../ficheros/conexiones.txt", "w");
-    if(f == NULL) {printf("Error: Archivo nulo"); return;}
-
-    for(int i=0;i<conx.num_conexiones;i++){
-        fprintf(f, "%s-%i-%i-%i-%s\n", conx.conexion[i].id_cnx, conx.conexion[i].id_org, conx.conexion[i].id_dst, conx.conexion[i].estado, conx.conexion[i].cond);
-    }
-    fclose(f);
 }
 
 
@@ -125,41 +84,12 @@ void imprimirSalas(v_salas salas)
     }
 }
 
-void inicializarConexiones()
-{
-    v_conexiones conexiones;
-    conexiones.num_conexiones = 2;
-    conexiones.conexion = (t_conexion*) malloc(conexiones.num_conexiones * sizeof(t_conexion));
-
-    conexiones.conexion[0].id_org = 01;
-    conexiones.conexion[0].id_dst = 02;
-    strcpy(conexiones.conexion[0].id_cnx, "D01");
-    conexiones.conexion[0].estado = 0;
-    strcpy(conexiones.conexion[0].cond, "llave amarilla");
-
-    conexiones.conexion[1].id_org = 03;
-    conexiones.conexion[1].id_dst = 04;
-    strcpy(conexiones.conexion[1].id_cnx, "E03");
-    conexiones.conexion[1].estado = 0;
-    strcpy(conexiones.conexion[1].cond, "gallina loca");
-}
-
-void imprimirConexiones(v_conexiones cnx)
-{
-    for(int i=0;i<cnx.num_conexiones;i++){
-        printf("%s-", cnx.conexion[i].id_cnx);
-        printf("%i-", cnx.conexion[i].id_org);
-        printf("%i-", cnx.conexion[i].id_dst);
-        printf("%i-", cnx.conexion[i].estado);
-        printf("%s", cnx.conexion[i].cond);
-    }
-}
-
 
 /* BITACORA ==========================================================================
 
 Las funciones guardar (estructura a fichero) funcionan correctamente
 Las funciones cargar (fichero a estructura) funcionan correctamente 
+Funcion describir sala terminada
 
 Borrar rewind y poner realloc por línea -> Listo
 

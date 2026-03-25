@@ -3,8 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../include/conexiones.h"
 
-
+// Estructura salas
 typedef struct
 {
     int id;
@@ -19,39 +20,16 @@ typedef struct
     int num_salas;
 } v_salas;
 
-
-typedef struct
-{
-    char id_cnx[5];
-    int id_org;
-    int id_dst;
-    int estado;
-    char cond[50];
-} t_conexion;
-
-typedef struct
-{
-    t_conexion *conexion;
-    int num_conexiones;
-} v_conexiones;
-
-
-void describirSala(t_sala);                 //Variables para cuando los objetos han sido recogidos
-void entrarSala(t_sala, t_conexion);
-int comprobarConexion(t_conexion, int);
-
+// Gestión ficheros
 void cargarSalas(v_salas*);
 void guardarSalas(v_salas);
-void cargarConexiones(v_conexiones*);
-void guardarConexiones(v_conexiones);
 
+// Demás
+void entrarSala(t_sala, t_conexion);        // Añadir t_personaje
 
-//PRUEBAS============================================================================================
-
+// PRUEBAS============================================================================================
 void inicializarSalas();
 void imprimirSalas(v_salas);
-void inicializarConexiones();
-void imprimirConexiones(v_conexiones);
 
 
 #endif
