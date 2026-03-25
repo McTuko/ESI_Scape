@@ -1,11 +1,14 @@
-#include "jugadores.h"
+#include "../include/jugadores.h"
 #include <stdlib.h>
 #include <string.h>
 
-int cargarJugadores(Jugador jugadores[], int max_jugadores) {
+
+int cargarJugadores(v_jugadores *v) {
     FILE *f;
     char linea[200];
-    int i = 0;
+
+    v->jugadores = NULL;
+    v->num_jugadores = 0;
 
     f = fopen(ARCHIVO_JUGADORES, "r");
     if (f == NULL) {
@@ -13,59 +16,69 @@ int cargarJugadores(Jugador jugadores[], int max_jugadores) {
         return 0;
     }
 
-    while (fgets(linea, sizeof(linea), f) != NULL && i < max_jugadores) {
+    while (fgets(linea, sizeof(linea), f) != NULL) {
         char *token;
+        t_jugador *temp;
+        temp = realloc(v->jugadores, (v->num_jugadores + 1) * sizeof(t_jugador));
+        if (temp == NULL) {
+            printf("Error de memoria\n");
+            free(v->jugadores);
+            v->jugadores = NULL;
+            v->num_jugadores = 0;
+            fclose(f);
+            return 0;
+        }
 
-        /* 1. ID del jugador */
+        v->jugadores = temp;
+
+
         token = strtok(linea, "-");
-        if (token == NULL) {
-            continue;
-        }
-        jugadores[i].id_jugador = atoi(token);
+        if (token == NULL) continue;
+        v->jugadores[v->num_jugadores].id_jugador = atoi(token);
 
-        /* 2. Nombre completo */
+
         token = strtok(NULL, "-");
-        if (token == NULL) {
-            continue;
-        }
-        strcpy(jugadores[i].nomb_jugador, token);
+        if (token == NULL) continue;
+        strcpy(v->jugadores[v->num_jugadores].nomb_jugador, token);
 
-        /* 3. Nombre de usuario */
+        /* Usuario */
         token = strtok(NULL, "-");
-        if (token == NULL) {
-            continue;
-        }
-        strcpy(jugadores[i].jugador, token);
+        if (token == NULL) continue;
+        strcpy(v->jugadores[v->num_jugadores].jugador, token);
 
-        /* 4. Contraseña */
+        /* Contraseña */
         token = strtok(NULL, "-");
-        if (token == NULL) {
-            continue;
-        }
-        strcpy(jugadores[i].contrasena, token);
+        if (token == NULL) continue;
+        strcpy(v->jugadores[v->num_jugadores].contrasena, token);
 
-        /* 5. Inventario */
+
         token = strtok(NULL, "-\n");
-        jugadores[i].num_objetos = 0;
+        v->jugadores[v->num_jugadores].num_objetos = 0;
 
         if (token != NULL) {
             char *obj = strtok(token, ",");
 
-            while (obj != NULL && jugadores[i].num_objetos < MAX_OBJ) {
-                jugadores[i].inventario[jugadores[i].num_objetos] = atoi(obj);
-                jugadores[i].num_objetos++;
+            while (obj != NULL &&
+                   v->jugadores[v->num_jugadores].num_objetos < MAX_OBJ) {
+
+                v->jugadores[v->num_jugadores]
+                    .inventario[v->jugadores[v->num_jugadores].num_objetos] = atoi(obj);
+
+                v->jugadores[v->num_jugadores].num_objetos++;
                 obj = strtok(NULL, ",");
             }
         }
 
-        i++;
+        v->num_jugadores++;
     }
 
     fclose(f);
-    return i;
+    return v->num_jugadores;
 }
 
-int guardarJugadores(Jugador jugadores[], int num_jugadores) {
+
+
+int guardarJugadores(v_jugadores v) {
     FILE *f;
     int i, j;
 
@@ -75,17 +88,17 @@ int guardarJugadores(Jugador jugadores[], int num_jugadores) {
         return 0;
     }
 
-    for (i = 0; i < num_jugadores; i++) {
+    for (i = 0; i < v.num_jugadores; i++) {
         fprintf(f, "%02d-%s-%s-%s-",
-                jugadores[i].id_jugador,
-                jugadores[i].nomb_jugador,
-                jugadores[i].jugador,
-                jugadores[i].contrasena);
+                v.jugadores[i].id_jugador,
+                v.jugadores[i].nomb_jugador,
+                v.jugadores[i].jugador,
+                v.jugadores[i].contrasena);
 
-        for (j = 0; j < jugadores[i].num_objetos; j++) {
-            fprintf(f, "%d", jugadores[i].inventario[j]);
+        for (j = 0; j < v.jugadores[i].num_objetos; j++) {
+            fprintf(f, "%d", v.jugadores[i].inventario[j]);
 
-            if (j < jugadores[i].num_objetos - 1) {
+            if (j < v.jugadores[i].num_objetos - 1) {
                 fprintf(f, ",");
             }
         }

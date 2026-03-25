@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 
-#define MAX_JUGADORES 100
 #define MAX_NOMBRE 21
 #define MAX_USER 11
 #define MAX_PASS 9
@@ -11,43 +10,45 @@
 #define ARCHIVO_JUGADORES "Jugadores.txt"
 
 typedef struct {
-    int id_jugador;                    
-    char nomb_jugador[MAX_NOMBRE];    
-    char jugador[MAX_USER];           
-    char contrasena[MAX_PASS];        
-    int inventario[MAX_OBJ];          
-    int num_objetos;                  
-} Jugador;
+    int id_jugador;
+    char nomb_jugador[MAX_NOMBRE];
+    char jugador[MAX_USER];
+    char contrasena[MAX_PASS];
+    int inventario[MAX_OBJ];
+    int num_objetos;
+} t_jugador;
+
+typedef struct {
+    t_jugador *jugadores;
+    int num_jugadores;
+} v_jugadores;
 
 
+int cargarJugadores(v_jugadores *v);
+
+int guardarJugadores(v_jugadores v);
+
+int insertarJugadorArchivo(t_jugador j);
 
 
+int altaJugador(v_jugadores *v, t_jugador nuevo);
 
-int cargarJugadores(Jugador jugadores[], int max_jugadores);
+int generarNuevoIdJugador(v_jugadores v);
 
-int guardarJugadores(Jugador jugadores[], int num_jugadores);
+int buscarJugadorPorId(v_jugadores v, int id_jugador);
 
-int insertarJugadorArchivo(Jugador j);
+int buscarJugadorPorUsername(v_jugadores v, const char usuario[]);
 
-int altaJugador(Jugador jugadores[], int *num_jugadores, Jugador nuevo);
+int existeJugadorPorUsername(v_jugadores v, const char usuario[]);
 
-int generarNuevoIdJugador(Jugador jugadores[], int num_jugadores);
+int existeJugadorPorId(v_jugadores v, int id_jugador);
 
-int buscarJugadorPorId(Jugador jugadores[], int num_jugadores, int id_jugador);
+int consultarJugadorPorId(v_jugadores v, int id_jugador);
 
-int buscarJugadorPorUsername(Jugador jugadores[], int num_jugadores, const char usuario[]);
+void mostrarJugador(t_jugador j);
 
-int existeJugadorPorUsername(Jugador jugadores[], int num_jugadores, const char usuario[]);
+void listarJugadores(v_jugadores v);
 
-int existeJugadorPorId(Jugador jugadores[], int num_jugadores, int id_jugador);
-
-void mostrarJugador(Jugador j);
-
-void listarJugadores(Jugador jugadores[], int num_jugadores);
-
-int consultarJugadorPorId(Jugador jugadores[], int num_jugadores, int id_jugador);
-
-
-
+void liberarJugadores(v_jugadores *v);
 
 #endif
