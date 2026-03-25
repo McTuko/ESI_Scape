@@ -45,7 +45,9 @@ void guardarSalas(v_salas);
 void cargarConexiones(v_conexiones*);
 void guardarConexiones(v_conexiones);
 
-//PRUEBAS============================================================================================0
+
+//PRUEBAS============================================================================================
+
 void inicializarSalas();
 void imprimirSalas(v_salas);
 void inicializarConexiones();
