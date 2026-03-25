@@ -14,7 +14,7 @@ typedef struct {
 } t_item;
 
 // Carga desde fichero
-int cargarObjetos(const char *nombreFichero, t_item **items);
+int cargarObjetos(const char *nombreFichero, t_item *items);
 
 // Mostrar
 void mostrarObjetosSala(t_item *items, int n, int sala);
