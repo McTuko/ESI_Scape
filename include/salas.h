@@ -5,16 +5,6 @@
 #include <stdio.h>
 
 
-void describirSala(t_sala);                 //Variables para cuando los objetos han sido recogidos
-void entrarSala(t_sala, t_conexion);
-int comprobarConexion(t_conexion, int);
-
-void cargarSalas(FILE, t_sala*);
-void guardarSalas(FILE*, t_sala);
-void cargarConexiones(FILE, t_conexion*);
-void guardarConexiones(FILE*, t_conexion);
-
-
 typedef struct
 {
     int id;
@@ -25,7 +15,7 @@ typedef struct
 
 typedef struct
 {
-    t_sala* sala;              //hacer vector dinamico
+    t_sala *sala;
     int num_salas;
 } v_salas;
 
@@ -33,7 +23,7 @@ typedef struct
 typedef struct
 {
     char id_cnx[3];
-    int id_otg;
+    int id_org;
     int id_dst;
     int estado;
     char cond[4];
@@ -41,10 +31,22 @@ typedef struct
 
 typedef struct
 {
-    t_conexion* conexion;      //hacer vector dinamico
+    t_conexion *conexion;
     int num_conexiones;
 } v_conexiones;
 
+
+void describirSala(t_sala);                 //Variables para cuando los objetos han sido recogidos
+void entrarSala(t_sala, t_conexion);
+int comprobarConexion(t_conexion, int);
+
+void cargarSalas(v_salas*);
+void guardarSalas(v_salas);
+void cargarConexiones(v_conexiones*);
+void guardarConexiones(v_conexiones);
+
+void pruebaSalas();
+void pruebaConexiones();
 
 
 #endif
