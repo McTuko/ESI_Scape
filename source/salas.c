@@ -8,6 +8,10 @@ int main()
     v_salas sala;
     cargarSalas(&sala);
     imprimirSalas(sala);
+
+    v_conexiones cnx;
+    cargarConexiones(&cnx);
+    imprimirConexiones(cnx);
 }
 
 void entrarSala(t_sala, t_conexion)
@@ -26,7 +30,7 @@ void cargarSalas(v_salas *salas)
     if(f == NULL) {printf("Error: Archivo nulo"); return;}
     char linea[250];
     int i=0;
-    salas->sala = (t_sala*) malloc(i * sizeof(t_sala));
+    salas->sala = NULL;
 
     while(fgets(linea, 250, f) != NULL){
         salas->sala = realloc(salas->sala, (i+1) * sizeof(t_sala));
@@ -53,13 +57,14 @@ void guardarSalas(v_salas salas)
     fclose(f);
 }
 
-
 void cargarConexiones(v_conexiones *conx)
 {
     FILE *f = fopen("../ficheros/conexiones.txt", "r");
     if(f == NULL) {printf("Error: Archivo nulo"); return;}
     char linea[250];
     int i=0;
+    conx->conexion = NULL;
+
     conx->conexion = (t_conexion*) malloc(i * sizeof(t_conexion));
 
     while(fgets(linea, 250, f) != NULL){
@@ -151,11 +156,11 @@ void imprimirConexiones(v_conexiones cnx)
 }
 
 
-/* VITACORA ==========================================================================
+/* BITACORA ==========================================================================
 
 Las funciones guardar (estructura a fichero) funcionan correctamente
 Las funciones cargar (fichero a estructura) funcionan correctamente 
 
-Borrar rewind y poner realloc por línea
+Borrar rewind y poner realloc por línea -> Listo
 
 */
