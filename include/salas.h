@@ -22,11 +22,11 @@ typedef struct
 
 typedef struct
 {
-    char id_cnx[3];
+    char id_cnx[5];
     int id_org;
     int id_dst;
     int estado;
-    char cond[4];
+    char cond[50];
 } t_conexion;
 
 typedef struct
@@ -45,13 +45,11 @@ void guardarSalas(v_salas);
 void cargarConexiones(v_conexiones*);
 void guardarConexiones(v_conexiones);
 
-void pruebaSalas();
-void pruebaConexiones();
+//PRUEBAS============================================================================================0
+void inicializarSalas();
+void imprimirSalas(v_salas);
+void inicializarConexiones();
+void imprimirConexiones(v_conexiones);
 
 
 #endif
-
-
-//Separa en tokens separados por -
-//registro[i].edad = atoi(strtok(linea,"-"));
-//strcpy(registro[i].nombre, strtok(NULL,"-"));
