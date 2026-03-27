@@ -3,14 +3,26 @@
 #include <stdio.h>
 #include "../include/salas.h"
 #include "../include/conexiones.h"
+#include "../include/jugadores.h"
 
 int main()
 {
-    v_salas sala;
-    cargarSalas(&sala);
-    imprimirSalas(sala);
-    //guardarSala(sala);
-    describirSala(sala.sala[1]);
+// Texto azul
+    printf("\033[34m\n");
+    printf("::::::::::  ::::::::  :::::::::::               ::::::::::  ::::::::   ::::::::      :::     :::::::::  ::::::::::\n");
+    printf(":+:        :+:    :+:     :+:                   :+:        :+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:\n");
+    printf("+:+        +:+            +:+                   +:+        +:+        +:+         +:+   +:+  +:+    +:+ +:+\n");
+    printf("+#++:++#   +#++:++#++     +#+     +#++:++#++    +#++:++#   +#++:++#++ +#+        +#++:++#++: +#++:++#+  +#++:++#\n");
+    printf("+#+               +#+     +#+                   +#+               +#+ +#+        +#+     +#+ +#+        +#+\n");
+    printf("#+#        #+#    #+#     #+#                   #+#        #+#    #+# #+#    #+# #+#     #+# #+#        #+#\n");
+    printf("##########  ########  ###########               ##########  ########   ########  ###     ### ###        ##########\n");
+    printf(" ^^^^^ ^^^^^^^^^^^^^^^^^^^^^             ^^^^^^^^^^^^^^^^^^^\n");
+    printf("\033[0m");
+
+    // Texto blanco
+    printf("\033[37m"); 
+    for (int i = 0; i < 2; i++) printf("---------------------------------------------------------------------------------\n");
+    printf("\033[0m");
 }
 
 
@@ -47,7 +59,7 @@ void guardarSalas(v_salas salas)
     fclose(f);
 }
 
-void entrarSala(t_sala, t_conexion)             // Añadir t_jugador
+void entrarSala(t_sala salas, t_conexion conexiones, t_jugador jugadores)
 {
 
 }
@@ -64,14 +76,14 @@ void inicializarSalas()
     salas.sala = (t_sala*) malloc(salas.num_salas * sizeof(t_sala));
 
     salas.sala[0].id = 01;
-    strcpy(salas.sala[0].nombre, "cafete");
+    strcpy(salas.sala[0].nombre, "Aula magia");
     salas.sala[0].tipo = 'F';
-    strcpy(salas.sala[0].desc, "Robe me da cañitas de chocolate");
+    strcpy(salas.sala[0].desc, "Sandra quiere enchufe");
 
     salas.sala[1].id = 02;
-    strcpy(salas.sala[1].nombre, "ñesi");
+    strcpy(salas.sala[1].nombre, "cafeteria");
     salas.sala[1].tipo = 'N';
-    strcpy(salas.sala[1].desc, "Bombardeenme");
+    strcpy(salas.sala[1].desc, "Quiero un donut");
 }
 
 void imprimirSalas(v_salas salas)
@@ -92,5 +104,9 @@ Las funciones cargar (fichero a estructura) funcionan correctamente
 Funcion describir sala terminada
 
 Borrar rewind y poner realloc por línea -> Listo
+
+Lógica de comprobar conexión y entrar en sala
+
+Incluir free de la memoria dinámica
 
 */
