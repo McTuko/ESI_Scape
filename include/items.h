@@ -7,7 +7,7 @@
 #define MAX_DESC 51
 
 typedef struct {
-    int id;                 // OB01
+    char id[5];                 // OB01
     char nombre[MAX_NOMBRE];
     char desc[MAX_DESC];
     int localizacion;           // id sala o -1 inventario
@@ -16,20 +16,20 @@ typedef struct {
 typedef struct {
     t_item *item;
     int num_items;
-}v_items;
+} v_items;
 
 // Carga desde fichero
-int cargarObjetos(const char *nombreFichero, t_item *items);
+void cargarObjetos(v_items *items);
 
 // Mostrar
 void mostrarObjetosSala(t_item *items, int n, int sala);
 void mostrarInventario(t_item *items, int n);
 
 // Acciones
-int cogerObjeto(t_item *items, int n, int sala, int *id);
-int soltarObjeto(t_item *items, int n, int sala, int *id);
+int cogerObjeto(t_item *items, int n, int sala, const char *id);
+int soltarObjeto(t_item *items, int n, int sala, const char *id);
 
 // Utilidades
-int buscarObjeto(t_item *items, int n, int *id);
+int buscarObjeto(t_item *items, int n, const char *id);
 
 #endif

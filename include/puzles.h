@@ -5,7 +5,7 @@
 #define MAX_SOL 50
 
 typedef struct {
-    char id[4];             // P01
+    char id[4];             // P01 + '\0'
     char nombre[16];
     int sala;
     char tipo[10];          // "Codigo" o "Palabra"
@@ -14,12 +14,14 @@ typedef struct {
     int resuelto;
 } t_puzle;
 
-// Funciones
+// Carga
 int cargarPuzles(const char *nombreFichero, t_puzle **puzles);
 
+// Utilidades
 int hayPuzleSala(t_puzle *puzles, int n, int sala);
 void mostrarPuzle(t_puzle *p);
 
-int resolverPuzle(t_puzle *p, char *respuesta);
+// Acciones
+int resolverPuzle(t_puzle *p, const char *respuesta);
 
 #endif
