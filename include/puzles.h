@@ -1,7 +1,7 @@
 #ifndef PUZLES_H
 #define PUZLES_H
 
-#define MAX_DESC 151
+#define MAX_DESC_P 151
 #define MAX_SOL 50
 
 typedef struct {
@@ -9,7 +9,7 @@ typedef struct {
     char nombre[16];
     int sala;
     char tipo[10];          // "Codigo" o "Palabra"
-    char descripcion[MAX_DESC];
+    char descripcion[MAX_DESC_P];
     char solucion[MAX_SOL];
     int resuelto;
 } t_puzle;
