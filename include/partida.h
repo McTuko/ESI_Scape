@@ -12,7 +12,7 @@ typedef struct {
     char id_item[5];
     int localizacion_item[20];      // id sala o -1 inventario
     int id_conexión;                // estructura dinamica a parte para objetos y conexiones
-    int
+    int bool;                       // tiene datos guardados
 } t_partida;
 
 #endif

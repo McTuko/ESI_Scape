@@ -94,6 +94,9 @@ Las funciones cargar (fichero a estructura) funcionan correctamente
 
 Borrar rewind y poner realloc por línea -> Listo
 
+
+
+
 Lógica de comprobar conexión
 
 */

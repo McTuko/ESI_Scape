@@ -16,12 +16,11 @@ int main()
     printf("+#+               +#+     +#+                   +#+               +#+ +#+        +#+     +#+ +#+        +#+\n");
     printf("#+#        #+#    #+#     #+#                   #+#        #+#    #+# #+#    #+# #+#     #+# #+#        #+#\n");
     printf("##########  ########  ###########               ##########  ########   ########  ###     ### ###        ##########\n");
-    printf(" ^^^^^ ^^^^^^^^^^^^^^^^^^^^^             ^^^^^^^^^^^^^^^^^^^\n");
     printf("\033[0m");
 
     // Texto blanco
     printf("\033[37m"); 
-    for (int i = 0; i < 2; i++) printf("---------------------------------------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------------------------------------------\n");
     printf("\033[0m");
 }
 
@@ -104,6 +103,9 @@ Las funciones cargar (fichero a estructura) funcionan correctamente
 Funcion describir sala terminada
 
 Borrar rewind y poner realloc por línea -> Listo
+
+
+
 
 Lógica de comprobar conexión y entrar en sala
 
