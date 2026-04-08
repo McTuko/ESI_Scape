@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/conexiones.h"
-#include "../include/jugadores.h"
+#include "../include/partida.h"
 
 // Estructura salas
 typedef struct
@@ -26,7 +26,7 @@ void cargarSalas(v_salas*);
 void guardarSalas(v_salas);
 
 // Demás
-void entrarSala(t_sala, t_conexion, t_jugador);
+void entrarSala(t_partida*);
 
 // PRUEBAS============================================================================================
 void inicializarSalas();
