@@ -19,17 +19,17 @@ typedef struct {
 } v_items;
 
 // Carga desde fichero
-void cargarObjetos(v_items *items);
+void cargarItems(v_items *items);
 
 // Mostrar
-void mostrarObjetosSala(t_item *items, int n, int sala);
-void mostrarInventario(t_item *items, int n);
+void mostrarItemsSala(v_items *items, int n, int sala);
+void mostrarInventario(v_items *items, int n);
 
 // Acciones
-int cogerObjeto(t_item *items, int n, int sala, const char *id);
-int soltarObjeto(t_item *items, int n, int sala, const char *id);
+int cogerItem(v_items *items, int n, int sala, const char *id);
+int soltarItem(v_items *items, int n, int sala, const char *id);
 
 // Utilidades
-int buscarObjeto(t_item *items, int n, const char *id);
+int buscarItem(v_items *items, int n, const char *id);
 
 #endif

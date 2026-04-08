@@ -2,52 +2,52 @@
 #include <stdlib.h>
 #include <string.h>
 
-int buscarObjeto(t_item *items, int n, const char *id) {
+int buscarItem(v_items *items, int n, const char *id) {
     for (int i = 0; i < n; i++) {
-        if (strcmp(items[i].id, id) == 0)
+        if (strcmp(items->item[i].id, id) == 0)
             return i;
     }
     return -1;
 }
 
-void mostrarObjetosSala(t_item *items, int n, int sala) {
+void mostrarItemsSala(v_items *items, int n, int sala) {
     for (int i = 0; i < n; i++) {
-        if (items[i].localizacion == sala) {
-            printf("%s - %s\n", items[i].id, items[i].nombre);
+        if (items->item[i].localizacion == sala) {
+            printf("%s - %s\n", items->item[i].id, items->item[i].nombre);
         }
     }
 }
 
-void mostrarInventario(t_item *items, int n) {
+void mostrarInventario(v_items *items, int n) {
     printf("Inventario:\n");
     for (int i = 0; i < n; i++) {
-        if (items[i].localizacion == -1) {
-            printf("%s - %s\n", items[i].id, items[i].nombre);
+        if (items->item[i].localizacion == -1) {
+            printf("%s - %s\n", items->item[i].id, items->item[i].nombre);
         }
     }
 }
 
-int cogerObjeto(t_item *items, int n, int sala, const char *id) {
-    int pos = buscarObjeto(items, n, id);
+int cogerItem(v_items *items, int n, int sala, const char *id) {
+    int pos = buscarItem(items, n, id);
 
     if (pos == -1) return 0;
-    if (items[pos].localizacion != sala) return 0;
+    if (items->item[pos].localizacion != sala) return 0;
 
-    items[pos].localizacion = -1;
+    items->item[pos].localizacion = -1;
     return 1;
 }
 
-int soltarObjeto(t_item *items, int n, int sala, const char *id) {
-    int pos = buscarObjeto(items, n, id);
+int soltarItem(v_items *items, int n, int sala, const char *id) {
+    int pos = buscarItem(items, n, id);
 
     if (pos == -1) return 0;
-    if (items[pos].localizacion != -1) return 0;
+    if (items->item[pos].localizacion != -1) return 0;
 
-    items[pos].localizacion = sala;
+    items->item[pos].localizacion = sala;
     return 1;
 }
 
-void cargarObjetos(v_items *items)
+void cargarItems(v_items *items)
 {
     FILE *f = fopen("../ficheros/items.txt", "r");
     if(f == NULL) {
