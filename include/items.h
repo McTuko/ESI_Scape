@@ -3,12 +3,12 @@
 
 #include <stdio.h>
 
-#define MAX_NOMBRE 16
+#define MAX_NOMBRE_ITEM 16
 #define MAX_DESC_I 51
 
 typedef struct {
     char id[5];                 // OB01
-    char nombre[MAX_NOMBRE];
+    char nombre[MAX_NOMBRE_ITEM];
     char desc[MAX_DESC_I];
     int localizacion;           // id sala o -1 inventario
 } t_item;
