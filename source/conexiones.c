@@ -46,9 +46,9 @@ void guardarConexiones(v_conexiones conx)
     fclose(f);
 }
 
-int comprobarConexion(t_conexion, int)
+int comprobarConexion(int s1, int s2, v_conexiones conx)
 {
-
+    
 }
 
 

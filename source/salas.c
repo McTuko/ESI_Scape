@@ -4,24 +4,11 @@
 #include "../include/salas.h"
 #include "../include/conexiones.h"
 #include "../include/jugadores.h"
+#include "../include/partida.h"
 
 int main()
 {
-// Texto azul
-    printf("\033[34m\n");
-    printf("::::::::::  ::::::::  :::::::::::               ::::::::::  ::::::::   ::::::::      :::     :::::::::  ::::::::::\n");
-    printf(":+:        :+:    :+:     :+:                   :+:        :+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:\n");
-    printf("+:+        +:+            +:+                   +:+        +:+        +:+         +:+   +:+  +:+    +:+ +:+\n");
-    printf("+#++:++#   +#++:++#++     +#+     +#++:++#++    +#++:++#   +#++:++#++ +#+        +#++:++#++: +#++:++#+  +#++:++#\n");
-    printf("+#+               +#+     +#+                   +#+               +#+ +#+        +#+     +#+ +#+        +#+\n");
-    printf("#+#        #+#    #+#     #+#                   #+#        #+#    #+# #+#    #+# #+#     #+# #+#        #+#\n");
-    printf("##########  ########  ###########               ##########  ########   ########  ###     ### ###        ##########\n");
-    printf("\033[0m");
 
-    // Texto blanco
-    printf("\033[37m"); 
-    printf("------------------------------------------------------------------------------------------------------------------\n");
-    printf("\033[0m");
 }
 
 
@@ -58,9 +45,14 @@ void guardarSalas(v_salas salas)
     fclose(f);
 }
 
-void entrarSala(t_sala salas, t_conexion conexiones, t_jugador jugadores)
+void entrarSala(int s1, int s2, v_conexiones conx, t_partida *partida)
 {
-
+    for(int i=0;i>conx.num_conexiones;i++){
+        if((conx.conexion[i].id_org == s1) && (conx.conexion[i].id_dst == s2)){
+            if(conx.conexion[i].estado == 1) partida->id_sala = s2;
+            else printf("Conexión cerrada\n");
+        }
+    }
 }
 
 

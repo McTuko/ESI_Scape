@@ -25,7 +25,7 @@ void cargarConexiones(v_conexiones*);
 void guardarConexiones(v_conexiones);
 
 // Demás
-int comprobarConexion(t_conexion, int);
+int comprobarConexion(int, int, v_conexiones);
 
 // PRUEBAS===================================================================
 void inicializarConexiones();

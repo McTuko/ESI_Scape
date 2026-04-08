@@ -3,19 +3,26 @@
 #include "../include/menu.h"
 #include "../include/partida.h"
 
+int main()
+{
+    t_partida partida;
+    partida.datos=1;
+    portada();
+    menu1(&partida);
+}
 
 void menu1(t_partida *partida)
 {
     int n;
     int num;
-    select_m(&n);
+    select_m1(&n);
 
     switch(n)
     {
     case 1:
         system("cls");
         // Implementar bien (funcion jugar)
-        if(partida->bool==1){
+        if(partida->datos==1){
                 printf("Ya existe una partida\n");
                 printf("%cDesea sobreescribir los datos?\n", 168);
                 printf("1. Si\n");
@@ -25,26 +32,31 @@ void menu1(t_partida *partida)
                 if(num==1) {system("cls");/*jugar(partida)*/;}
                 else {system("cls");menu1(partida);}
             }
-            else {/*jugar(partida)*/;partida->bool=1;}
+            else {/*jugar(partida)*/;partida->datos=1;}
 
         Sleep(1000);
         system("cls");
         menu1(partida);
         break;
+
     case 2:
         system("cls");  
         // Implementar bien
-        if(partida->bool==1){
+        if(partida->datos == 0){
             //cargarDatos(partida); hacer cargar datos unificado
-            system("cls");
-            partida->bool=1;
-        } 
-        else printf("Error: No hay datos que cargar");
+            partida->datos=1;
+            for(int i=0;i<2;i++){
+                printf(". ");
+                Sleep(1000);
+                printf("Datos cargados correctamente");
+            }
+        } else printf("Error: No hay datos que cargar");
 
         Sleep(2000);
         system("cls");
         menu1(partida);
         break;
+
     case 3:
         system("cls");
         // Liberar memoria
@@ -57,7 +69,7 @@ void select_m1(int *n)
 {
     int resultado;
     do{
-        impr_menu();
+        impr_menu1();
         printf("\033[33m");
         printf("Seleccion --> ");
         printf("\033[0m");
@@ -99,49 +111,54 @@ void menu2(t_partida *partida)
 {
     int n;
     int num;
-    select_c(&n);
+    select_m2(&n);
 
     switch (n)
     { 
     case 1:
         system("cls");
-        
+        printf("%s", partida->salas.sala[partida->id_sala].desc);
         break;
+
     case 2:
         system("cls");
-        
+        mostrarItemsSala(&partida->items, partida->id_sala);
+        //mostrarSalidas();
         break;
     case 3:
         system("cls");
-        
+        // 3. Entrar en otra sala
         break;
     case 4:
         system("cls");
-        
+        char cad[6];
+        printf("Cod item -> ");
+        //getw("%s", &cad);
+        cogerItem(&partida->items, partida->id_sala, cad);
         break;
     case 5:
         system("cls");
-        
+        // 5. Soltar objeto
         break;
     case 6:
         system("cls");
-        
+        mostrarInventario(&partida->items);
         break;
     case 7:
         system("cls");
-        
+        // 7. Usar objeto
         break;
     case 8:
         system("cls");
-        
+        // 8. Resolver puzle
         break;
     case 9:
         system("cls");
-        
+        // 9. Guardar partida
         break;
     case 10:
         system("cls");
-        
+        menu1(partida);
         break;
     }
 }
@@ -190,7 +207,7 @@ void impr_menu2()
     printf("5. Soltar objeto\n");
     printf("6. Inventario\n");
     printf("7. Usar objeto\n");
-    printf("8 Resolver puzle\n");
+    printf("8. Resolver puzle\n");
     printf("9. Guardar partida\n");
     printf("10. Volver\n\n");
 }
@@ -215,7 +232,7 @@ void ganador(t_partida *partida)
     printf("\n\nPara seguir <ENTER> ");
     while ((tmp = getchar()) != '\n' && tmp != EOF);
     getchar();
-    menu(partida);
+    menu1(partida);
 }
 
 void portada()
