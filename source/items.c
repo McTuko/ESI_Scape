@@ -2,16 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-int buscarItem(v_items *items, int n, const char *id) {
-    for (int i = 0; i < n; i++) {
+int buscarItem(v_items *items, const char *id) {
+    for (int i = 0; i < items->num_items; i++) {
         if (strcmp(items->item[i].id, id) == 0)
             return i;
     }
     return -1;
 }
 
-void mostrarItemsSala(v_items *items, int n, int sala) {
-    for (int i = 0; i < n; i++) {
+void mostrarItemsSala(v_items *items, int sala) {
+    for (int i = 0; i < items->num_items; i++) {
         if (items->item[i].localizacion == sala) {
             printf("%s - %s\n", items->item[i].id, items->item[i].nombre);
         }
@@ -27,8 +27,8 @@ void mostrarInventario(v_items *items, int n) {
     }
 }
 
-int cogerItem(v_items *items, int n, int sala, const char *id) {
-    int pos = buscarItem(items, n, id);
+int cogerItem(v_items *items, int sala, const char *id) {
+    int pos = buscarItem(items, items->num_items, id);
 
     if (pos == -1) return 0;
     if (items->item[pos].localizacion != sala) return 0;
@@ -37,8 +37,8 @@ int cogerItem(v_items *items, int n, int sala, const char *id) {
     return 1;
 }
 
-int soltarItem(v_items *items, int n, int sala, const char *id) {
-    int pos = buscarItem(items, n, id);
+int soltarItem(v_items *items, int sala, const char *id) {
+    int pos = buscarItem(items, items->num_items, id);
 
     if (pos == -1) return 0;
     if (items->item[pos].localizacion != -1) return 0;

@@ -22,14 +22,14 @@ typedef struct {
 void cargarItems(v_items *items);
 
 // Mostrar
-void mostrarItemsSala(v_items *items, int n, int sala);
-void mostrarInventario(v_items *items, int n);
+void mostrarItemsSala(v_items *items, int sala);
+void mostrarInventario(v_items *items);
 
 // Acciones
-int cogerItem(v_items *items, int n, int sala, const char *id);
-int soltarItem(v_items *items, int n, int sala, const char *id);
+int cogerItem(v_items *items, int sala, const char *id);
+int soltarItem(v_items *items, int sala, const char *id);
 
 // Utilidades
-int buscarItem(v_items *items, int n, const char *id);
+int buscarItem(v_items *items, const char *id);
 
 #endif
