@@ -51,6 +51,13 @@ int comprobarConexion(int s1, int s2, v_conexiones conx)
     
 }
 
+void freeConx(v_conexiones* conx)
+{
+    free(conx->conexion);
+    conx->conexion = NULL;
+    conx->num_conexiones = 0;
+}
+
 
 // PRUEBAS ======================================================================================================
 // Inicializar e imprimir estructuras
@@ -93,6 +100,8 @@ Las funciones guardar (estructura a fichero) funcionan correctamente
 Las funciones cargar (fichero a estructura) funcionan correctamente 
 
 Borrar rewind y poner realloc por línea -> Listo
+
+Crear función para liberar memoria -> Listo
 
 
 

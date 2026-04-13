@@ -5,7 +5,6 @@
 #include "../include/items.h"
 #include "../include/conexiones.h"
 #include "../include/puzles.h"
-#include "../include/salas.h"
 #include "../include/jugadores.h"
 
 typedef struct {

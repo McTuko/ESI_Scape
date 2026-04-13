@@ -26,6 +26,7 @@ void guardarConexiones(v_conexiones);
 
 // Demás
 int comprobarConexion(int, int, v_conexiones);
+void freeConx(v_conexiones*);
 
 // PRUEBAS===================================================================
 void inicializarConexiones();

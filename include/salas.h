@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/conexiones.h"
-#include "../include/partida.h"
+typedef struct t_partida t_partida;
 
 // Estructura salas
 typedef struct
@@ -25,8 +25,9 @@ typedef struct
 void cargarSalas(v_salas*);
 void guardarSalas(v_salas);
 
-// Demás
-void entrarSala(t_partida*);
+//Demás
+void entrarSala(int, int, v_conexiones, *t_partida);
+void freeSalas(v_salas*);
 
 // PRUEBAS============================================================================================
 void inicializarSalas();

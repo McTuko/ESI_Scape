@@ -55,6 +55,13 @@ void entrarSala(int s1, int s2, v_conexiones conx, t_partida *partida)
     }
 }
 
+void freeSalas(v_salas* salas)
+{
+    free(salas->sala);
+    salas->sala = NULL;
+    salas->num_salas = 0;
+}
+
 
 // PRUEBAS ======================================================================================================
 // Inicializar e imprimir estructuras
@@ -96,11 +103,11 @@ Funcion describir sala terminada
 
 Borrar rewind y poner realloc por línea -> Listo
 
+Función liberar memoria -> Listo
 
 
 
-Lógica de comprobar conexión y entrar en sala
 
-Incluir free de la memoria dinámica
+Lógica de comprobar conexión y entrar en sala -> Comprobar
 
 */
