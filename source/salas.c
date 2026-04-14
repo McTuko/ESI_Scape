@@ -6,56 +6,142 @@
 #include "../include/jugadores.h"
 #include "../include/partida.h"
 
-int main()
-{
 
+static void eliminarSaltoLinea(char *cadena)
+{
+    if (cadena != NULL)cadena[strcspn(cadena, "\n")] = '\0';
 }
 
 
-void cargarSalas(v_salas *salas)
+int cargarSalas(v_salas *salas)
 {
-    FILE *f = fopen("../ficheros/salas.txt", "r");
-    if(f == NULL) {printf("Error: Archivo nulo"); return;}
+    FILE *f = fopen(ARCHIVO_SALAS, "r");
     char linea[250];
-    int i=0;
+    int i = 0;
+
     salas->sala = NULL;
+    salas->num_salas = 0;
 
-    while(fgets(linea, 250, f) != NULL){
-        salas->sala = realloc(salas->sala, (i+1) * sizeof(t_sala));
+    if (f == NULL){printf("Error: Archivo nulo\n"); return 0;}
 
-        salas->sala[i].id = atoi(strtok(linea,"-"));        // Entero
-        strcpy(salas->sala[i].nombre, strtok(NULL,"-"));    // String
-        salas->sala[i].tipo = (strtok(NULL, "-"))[0];       // Caracter : [0] porque devuelve puntero (vector)
-        strcpy(salas->sala[i].desc, strtok(NULL,"-"));
+    while (fgets(linea, 250, f) != NULL)
+    {
+        t_sala *temp;
+        char *token;
+
+        eliminarSaltoLinea(linea);
+
+        if (strlen(linea) == 0) continue;
+
+        temp = realloc(salas->sala, (i + 1) * sizeof(t_sala));
+        if (temp == NULL)
+        {
+            printf("Error al reservar memoria\n");
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
+            fclose(f);
+            return 0;
+        }
+        salas->sala = temp;
+
+        token = strtok(linea, "-");
+        if (token == NULL)
+        {
+            printf("Error de formato en id de sala\n");
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
+            fclose(f);
+            return 0;
+        }
+        salas->sala[i].id = atoi(token);
+
+        token = strtok(NULL, "-");
+        if (token == NULL)
+        {
+            printf("Error de formato en nombre de sala\n");
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
+            fclose(f);
+            return 0;
+        }
+        strncpy(salas->sala[i].nombre, token, MAX_NOMBRE_SALA - 1);
+        salas->sala[i].nombre[MAX_NOMBRE_SALA - 1] = '\0';
+
+        token = strtok(NULL, "-");
+        if (token == NULL)
+        {
+            printf("Error de formato en tipo de sala\n");
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
+            fclose(f);
+            return 0;
+        }
+        strncpy(salas->sala[i].tipo, token, MAX_TIPO_SALA - 1);
+        salas->sala[i].tipo[MAX_TIPO_SALA - 1] = '\0';
+
+        token = strtok(NULL, "-");
+        if (token == NULL)
+        {
+            printf("Error de formato en descripcion de sala\n");
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
+            fclose(f);
+            return 0;
+        }
+        strncpy(salas->sala[i].desc, token, MAX_DESC_SALA - 1);
+        salas->sala[i].desc[MAX_DESC_SALA - 1] = '\0';
+
         i++;
     }
+
     salas->num_salas = i;
-    
+
     fclose(f);
+    return 1;
 }
 
-void guardarSalas(v_salas salas)
-{
-    FILE *f = fopen("../ficheros/salas.txt", "w");
-    if(f == NULL) {printf("Error: Archivo nulo"); return;}
 
-    for(int i=0;i<salas.num_salas;i++){
-        fprintf(f, "%i-%s-%c-%s\n", salas.sala[i].id, salas.sala[i].nombre, salas.sala[i].tipo, salas.sala[i].desc);
+int guardarSalas(v_salas salas)
+{
+    FILE *f = fopen(ARCHIVO_SALAS, "w");
+    int i;
+
+    if (f == NULL){printf("Error: Archivo nulo\n");return 0; }
+
+    for (i = 0; i < salas.num_salas; i++)
+    {
+        fprintf(f, "%02d-%s-%s-%s\n",
+                salas.sala[i].id,
+                salas.sala[i].nombre,
+                salas.sala[i].tipo,
+                salas.sala[i].desc);
     }
     fclose(f);
+    return 1;
 }
 
+
+/* Pendiente de revisar más adelante */
 void entrarSala(int s1, int s2, v_conexiones conx, t_partida *partida)
 {
-    for(int i=0;i>conx.num_conexiones;i++){
-        if((conx.conexion[i].id_org == s1) && (conx.conexion[i].id_dst == s2)){
-            if(conx.conexion[i].estado == 1) partida->id_sala = s2;
-            else printf("Conexión cerrada\n");
+    int i;
+    for (i = 0; i < conx.num_conexiones; i++)
+    {
+        if ((conx.conexiones[i].id_org == s1) && (conx.conexiones[i].id_dst == s2))
+        {
+            if (strcmp(conx.conexiones[i].estado, "Activa") == 0){partida->id_sala = s2;
+            }else printf("Conexión cerrada\n"); 
         }
     }
 }
 
-void freeSalas(v_salas* salas)
+
+void freeSalas(v_salas *salas)
 {
     free(salas->sala);
     salas->sala = NULL;
@@ -63,51 +149,68 @@ void freeSalas(v_salas* salas)
 }
 
 
-// PRUEBAS ======================================================================================================
-// Inicializar e imprimir estructuras
-// (Borrar para la entrega)
-
-void inicializarSalas()
+int buscarSalaPorId(v_salas salas, int id)
 {
-    v_salas salas;
-    salas.num_salas = 2;
-    salas.sala = (t_sala*) malloc(salas.num_salas * sizeof(t_sala));
+    int i;
 
-    salas.sala[0].id = 01;
-    strcpy(salas.sala[0].nombre, "Aula magia");
-    salas.sala[0].tipo = 'F';
-    strcpy(salas.sala[0].desc, "Sandra quiere enchufe");
+    for (i = 0; i < salas.num_salas; i++)
+    {
+        if (salas.sala[i].id == id) return i;
+    }
+    return -1;
+}
 
-    salas.sala[1].id = 02;
-    strcpy(salas.sala[1].nombre, "cafeteria");
-    salas.sala[1].tipo = 'N';
-    strcpy(salas.sala[1].desc, "Quiero un donut");
+void mostrarSala(t_sala sala)
+{
+    printf("ID: %02d\n", sala.id);
+    printf("Nombre: %s\n", sala.nombre);
+    printf("Tipo: %s\n", sala.tipo);
+    printf("Descripcion: %s\n", sala.desc);
 }
 
 void imprimirSalas(v_salas salas)
 {
-    for(int i=0;i<salas.num_salas;i++){
-        printf("%i-", salas.sala[i].id);
+    int i;
+
+    for (i = 0; i < salas.num_salas; i++)
+    {
+        printf("%02d-", salas.sala[i].id);
         printf("%s-", salas.sala[i].nombre);
-        printf("%c-", salas.sala[i].tipo);
-        printf("%s", salas.sala[i].desc);
+        printf("%s-", salas.sala[i].tipo);
+        printf("%s\n", salas.sala[i].desc);
     }
 }
-
 
 /* BITACORA ==========================================================================
 
 Las funciones guardar (estructura a fichero) funcionan correctamente
 Las funciones cargar (fichero a estructura) funcionan correctamente 
-Funcion describir sala terminada
+Función describir sala terminada
 
 Borrar rewind y poner realloc por línea -> Listo
-
 Función liberar memoria -> Listo
 
 
+Corrección tipo sala: pasa de char a string ("INICIAL", "NORMAL", "SALIDA")
+Ajuste tamaños arrays:
+nombre -> 31
+desc -> 151
 
+Control de errores en carga:
+comprobación fopen, strtok y realloc
+Uso de realloc con puntero temporal -> evita pérdida de memoria
+Limpieza salto de línea -> eliminarSaltoLinea()
+Cambio a fichero "Salas.txt" según enunciado
+cargarSalas y guardarSalas devuelven int
+Adaptación a conexiones:
+conexion -> conexiones
+estado entero -> string ("Activa"/"Bloqueada")
+Corrección bucle en entrarSala
 
-Lógica de comprobar conexión y entrar en sala -> Comprobar
+Añadidas funciones:
+buscarSalaPorId()
+mostrarSala()
+
+Pendiente revisar entrarSala dentro de la lógica de partida
 
 */

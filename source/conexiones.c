@@ -3,93 +3,188 @@
 #include <stdio.h>
 #include "../include/conexiones.h"
 
-int main()
+
+static void eliminarSaltoLinea(char *cadena)
 {
-    v_conexiones cnx;
-    cargarConexiones(&cnx);
-    imprimirConexiones(cnx);
-    //guardarConexiones(cnx);
+    if(cadena != NULL)
+    {cadena[strcspn(cadena, "\n")] = '\0';}
 }
 
 
-void cargarConexiones(v_conexiones *conx)
+// GESTIÓN DE MEMORIA =================================================================
+
+void inicializarVectorConexiones(v_conexiones *conx)
 {
-    FILE *f = fopen("../ficheros/conexiones.txt", "r");
-    if(f == NULL) {printf("Error: Archivo nulo"); return;}
-    char linea[250];
-    int i=0;
-    conx->conexion = NULL;
-
-    while(fgets(linea, 250, f) != NULL){
-        conx->conexion = realloc(conx->conexion, (i+1) * sizeof(t_conexion));
-
-        strcpy(conx->conexion[i].id_cnx, strtok(linea,"-"));
-        conx->conexion[i].id_org = atoi(strtok(NULL,"-"));
-        conx->conexion[i].id_dst = atoi(strtok(NULL,"-"));
-        conx->conexion[i].estado = atoi(strtok(NULL,"-"));
-        strcpy(conx->conexion[i].cond, strtok(NULL,"-"));
-        i++;
-    }
-    conx->num_conexiones = i;
-    
-    fclose(f);
+    conx->conexiones = NULL;
+    conx->num_conexiones = 0;
 }
 
-void guardarConexiones(v_conexiones conx)
+void liberarConexiones(v_conexiones *conx)
 {
-    FILE *f = fopen("../ficheros/conexiones.txt", "w");
-    if(f == NULL) {printf("Error: Archivo nulo"); return;}
-
-    for(int i=0;i<conx.num_conexiones;i++){
-        fprintf(f, "%s-%i-%i-%i-%s\n", conx.conexion[i].id_cnx, conx.conexion[i].id_org, conx.conexion[i].id_dst, conx.conexion[i].estado, conx.conexion[i].cond);
-    }
-    fclose(f);
-}
-
-int comprobarConexion(int s1, int s2, v_conexiones conx)
-{
-    
-}
-
-void freeConx(v_conexiones* conx)
-{
-    free(conx->conexion);
-    conx->conexion = NULL;
+    free(conx->conexiones);
+    conx->conexiones = NULL;
     conx->num_conexiones = 0;
 }
 
 
-// PRUEBAS ======================================================================================================
+// VALIDACIÓN =========================================================================
+
+int estadoValido(const char *estado)
+{
+    if(strcmp(estado, "Activa") == 0 || strcmp(estado, "Bloqueada") == 0) {return 1;}
+    return 0;
+}
+
+int conexionValida(t_conexion conx)
+{
+    if(strlen(conx.id_cnx) == 0) return 0;
+
+    if(conx.id_org <= 0 || conx.id_dst <= 0) return 0;
+
+    if(!estadoValido(conx.estado)) return 0;
+    
+    if(strlen(conx.cond) == 0) return 0;
+    
+    return 1;
+}
+
+
+// GESTIÓN FICHEROS ===================================================================
+
+int cargarConexiones(v_conexiones *conx)
+{
+    FILE *f = fopen(ARCHIVO_CONEXIONES, "r");
+    char linea[250];
+    char *token;
+    int i = 0;
+
+    inicializarVectorConexiones(conx);
+
+    if(f == NULL){
+        printf("Error: Archivo nulo\n");
+        return 0;
+    }
+
+    while(fgets(linea, 250, f) != NULL){
+        t_conexion *temp;
+
+        eliminarSaltoLinea(linea);
+
+        temp = realloc(conx->conexiones, (i + 1) * sizeof(t_conexion));
+        if(temp == NULL){
+            printf("Error al reservar memoria\n");
+            fclose(f);
+            return 0;
+        }
+        conx->conexiones = temp;
+
+        token = strtok(linea, "-");
+        if(token == NULL){
+            printf("Error de formato en id_cnx\n");
+            fclose(f);
+            return 0;
+        }
+        strcpy(conx->conexiones[i].id_cnx, token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en id_org\n");
+            fclose(f);
+            return 0;
+        }
+        conx->conexiones[i].id_org = atoi(token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en id_dst\n");
+            fclose(f);
+            return 0;
+        }
+        conx->conexiones[i].id_dst = atoi(token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en estado\n");
+            fclose(f);
+            return 0;
+        }
+        strcpy(conx->conexiones[i].estado, token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en cond\n");
+            fclose(f);
+            return 0;
+        }
+        strcpy(conx->conexiones[i].cond, token);
+
+        if(!conexionValida(conx->conexiones[i])){
+            printf("Conexion invalida: %s\n", conx->conexiones[i].id_cnx);
+            fclose(f);
+            return 0;
+        }
+
+        i++;
+    }
+
+    conx->num_conexiones = i;
+    fclose(f);
+    return 1;
+}
+
+
+// UTILIDADES =========================================================================
+
+int buscarConexion(int s1, int s2, v_conexiones conx)
+{
+    for(int i = 0; i < conx.num_conexiones; i++)
+    {
+        if(conx.conexiones[i].id_org == s1 && conx.conexiones[i].id_dst == s2) return i;
+    }
+
+    return -1;
+}
+
+int existeConexion(int s1, int s2, v_conexiones conx)
+{
+    if(buscarConexion(s1, s2, conx) != -1) return 1;
+    return 0;
+}
+
+int conexionEstaActiva(int s1, int s2, v_conexiones conx)
+{
+    int pos = buscarConexion(s1, s2, conx);
+
+    if(pos == -1) return 0;
+    
+    if(strcmp(conx.conexiones[pos].estado, "Activa") == 0) return 1;
+    
+    return 0;
+}
+
+int desbloquearConexion(const char *id_cnx, v_conexiones *conx)
+{
+    for(int i = 0; i < conx->num_conexiones; i++)
+    {
+        if(strcmp(conx->conexiones[i].id_cnx, id_cnx) == 0){strcpy(conx->conexiones[i].estado, "Activa"); return 1;}
+    }
+    return 0;
+}
+
+
+// PRUEBAS ============================================================================
 // Inicializar e imprimir estructuras
 // (Borrar para la entrega)
 
-void inicializarConexiones()
-{
-    v_conexiones conexiones;
-    conexiones.num_conexiones = 2;
-    conexiones.conexion = (t_conexion*) malloc(conexiones.num_conexiones * sizeof(t_conexion));
-
-    conexiones.conexion[0].id_org = 01;
-    conexiones.conexion[0].id_dst = 02;
-    strcpy(conexiones.conexion[0].id_cnx, "D01");
-    conexiones.conexion[0].estado = 0;
-    strcpy(conexiones.conexion[0].cond, "llave amarilla");
-
-    conexiones.conexion[1].id_org = 03;
-    conexiones.conexion[1].id_dst = 04;
-    strcpy(conexiones.conexion[1].id_cnx, "E03");
-    conexiones.conexion[1].estado = 0;
-    strcpy(conexiones.conexion[1].cond, "gallina loca");
-}
-
 void imprimirConexiones(v_conexiones cnx)
 {
-    for(int i=0;i<cnx.num_conexiones;i++){
-        printf("%s-", cnx.conexion[i].id_cnx);
-        printf("%i-", cnx.conexion[i].id_org);
-        printf("%i-", cnx.conexion[i].id_dst);
-        printf("%i-", cnx.conexion[i].estado);
-        printf("%s", cnx.conexion[i].cond);
+    for(int i = 0; i < cnx.num_conexiones; i++)
+    {
+        printf("%s-", cnx.conexiones[i].id_cnx);
+        printf("%02d-", cnx.conexiones[i].id_org);
+        printf("%02d-", cnx.conexiones[i].id_dst);
+        printf("%s-", cnx.conexiones[i].estado);
+        printf("%s\n", cnx.conexiones[i].cond);
     }
 }
 
@@ -97,15 +192,27 @@ void imprimirConexiones(v_conexiones cnx)
 /* BITACORA ==========================================================================
 
 Las funciones guardar (estructura a fichero) funcionan correctamente
-Las funciones cargar (fichero a estructura) funcionan correctamente 
-
+Las funciones cargar (fichero a estructura) funcionan correctamente
 Borrar rewind y poner realloc por línea -> Listo
-
-Crear función para liberar memoria -> Listo
 
 
 
 
 Lógica de comprobar conexión
-
+//Dani, esto borralo, son los cambios que he hecho yo pero es tu codigo
+Estado cambiado a cadena: "Activa" / "Bloqueada"
+conexion pasa a llamarse conexiones según la nueva cabecera
+Se limpia el salto de línea al leer
+Se comprueba realloc
+comprobarConexion sustituida por:
+- buscarConexion
+- existeConexion
+- conexionEstaActiva
+- desbloquearConexion
+Cambios hechos en cargarConexiones:
+- Se elimina el salto de línea al leer cada línea del fichero
+- Se comprueba que la línea no esté vacía antes de procesarla
+- Se comprueba el resultado de realloc para evitar pérdidas de memoria
+- Se valida cada conexión antes de agregarla al vector
+//BORRAR: Por eso ahora es tan largo, porque he ido añadiendo validaciones y comprobaciones de errores para asegurar que el programa no tenga errores y no falle ante entradas inesperadas o problemas de memoria. Además, he añadido funciones específicas para manejar las conexiones, lo que hace que el código sea más modular y fácil de mantener.
 */
