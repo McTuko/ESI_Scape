@@ -45,34 +45,71 @@ int loginORegistro(v_jugadores *jugadores)
             }
 
             printf("Contrasena incorrecta.\n");
-            printf("1. Reintentar\n");
-            printf("2. Volver\n");
-            printf("Opcion: ");
-            scanf("%d", &opcion);
-            limpiarBuffer();
+            int opcion_pass = 0;
+            do
+            {
+                printf("1. Reintentar\n");
+                printf("2. Volver al Login\n");
+                printf("3. Salir\n");
+                printf("Opcion: ");
+                scanf("%d", &opcion_pass);
+                limpiarBuffer();
 
-            if (opcion == 2)
+                switch (opcion_pass)
+                {
+                    case 1:
+                        opcion_pass = 1;
+                        break;
+                    case 2:
+                        opcion_pass = 2;
+                        break;
+                    case 3:
+                        printf("Saliendo del programa...\n");
+                        exit(0);
+                    default:
+                        printf("Opcion incorrecta.\n");
+                        break;
+                }
+            } while (opcion_pass == 0);
+
+            if (opcion_pass == 2)
             {
                 continuar = 0;
             }
         }
         else
         {
-            printf("El usuario no existe.\n");
-            printf("1. Registrarse\n");
-            printf("2. Volver a intentar\n");
-            printf("Opcion: ");
-            scanf("%d", &opcion);
-            limpiarBuffer();
-
-            if (opcion == 1)
+            int opcion_menu = 0;
+            do
             {
-                pos = registrarNuevoJugador(jugadores);
-                if (pos != -1)
+                printf("El usuario no existe.\n");
+                printf("1. Registrarse\n");
+                printf("2. Volver al Login\n");
+                printf("3. Salir\n");
+                printf("Opcion: ");
+                scanf("%d", &opcion_menu);
+                limpiarBuffer();
+
+                switch (opcion_menu)
                 {
-                    return pos;
+                    case 1:
+                        pos = registrarNuevoJugador(jugadores);
+                        if (pos != -1)
+                        {
+                            return pos;
+                        }
+                        break;
+                    case 2:
+                        opcion_menu = 2; // Para salir del do-while y continuar el bucle principal
+                        break;
+                    case 3:
+                        printf("Saliendo del programa...\n");
+                        exit(0);
+                    default:
+                        printf("Opcion incorrecta.\n");
+                        break;
                 }
-            }
+            } while (opcion_menu != 2);
         }
     }
 
