@@ -108,7 +108,7 @@ int main(void)
     {
         printf("Error al cargar Conexiones.txt\n");
         liberarJugadores(&jugadores);
-        freeSalas(&salas);
+        liberarSalas(&salas);
         return 1;
     }
 
@@ -116,7 +116,7 @@ int main(void)
     {
         printf("Error al cargar Objetos.txt\n");
         liberarJugadores(&jugadores);
-        freeSalas(&salas);
+        liberarSalas(&salas);
         liberarConexiones(&conexiones);
         return 1;
     }
@@ -126,7 +126,7 @@ int main(void)
     {
         printf("Error al cargar Puzles.txt\n");
         liberarJugadores(&jugadores);
-        freeSalas(&salas);
+        liberarSalas(&salas);
         liberarConexiones(&conexiones);
         liberarItems(&items);
         return 1;
@@ -140,7 +140,7 @@ int main(void)
     {
         printf("No se pudo iniciar sesion.\n");
         liberarJugadores(&jugadores);
-        freeSalas(&salas);
+        liberarSalas(&salas);
         liberarConexiones(&conexiones);
         liberarItems(&items);
         liberarPuzles(&puzles);
@@ -233,7 +233,7 @@ int main(void)
     guardarJugadores(jugadores);
 
     liberarJugadores(&jugadores);
-    freeSalas(&salas);
+    liberarSalas(&salas);
     liberarConexiones(&conexiones);
     liberarItems(&items);
     liberarPuzles(&puzles);
