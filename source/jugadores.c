@@ -48,7 +48,8 @@ static int copiarJugador(t_jugador *destino, t_jugador origen){
 }
 
 
-int cargarJugadores(v_jugadores *v){
+int cargarJugadores(v_jugadores *v)
+{
     FILE *f;
     char linea[200];
 
@@ -64,7 +65,6 @@ int cargarJugadores(v_jugadores *v){
     while (fgets(linea, sizeof(linea), f) != NULL){
         char *token;
         t_jugador *temp;
-        t_jugador nuevo;
 
         eliminarSaltoLinea(linea);
 
@@ -72,43 +72,53 @@ int cargarJugadores(v_jugadores *v){
             continue;
         }
 
-        inicializarJugador(&nuevo);
+        temp = realloc(v->jugadores, (v->num_jugadores + 1) * sizeof(t_jugador));
+        if (temp == NULL){
+            printf("Error de memoria\n");
+            liberarJugadores(v);
+            fclose(f);
+            return 0;
+        }
+
+        v->jugadores = temp;
+
+        inicializarJugador(&v->jugadores[v->num_jugadores]);
 
         token = strtok(linea, "-");
         if (token == NULL){
             continue;
         }
-        nuevo.id_jugador = atoi(token);
+        v->jugadores[v->num_jugadores].id_jugador = atoi(token);
 
         token = strtok(NULL, "-");
         if (token == NULL){
-            liberarJugador(&nuevo);
+            liberarJugador(&v->jugadores[v->num_jugadores]);
             continue;
         }
-        strncpy(nuevo.nomb_jugador, token, MAX_NOMBRE - 1);
-        nuevo.nomb_jugador[MAX_NOMBRE - 1] = '\0';
+        strncpy(v->jugadores[v->num_jugadores].nomb_jugador, token, MAX_NOMBRE - 1);
+        v->jugadores[v->num_jugadores].nomb_jugador[MAX_NOMBRE - 1] = '\0';
+
+        token = strtok(NULL, "-");
+        if (token == NULL) {
+            liberarJugador(&v->jugadores[v->num_jugadores]);
+            continue;
+        }
+        strncpy(v->jugadores[v->num_jugadores].jugador, token, MAX_USER - 1);
+        v->jugadores[v->num_jugadores].jugador[MAX_USER - 1] = '\0';
 
         token = strtok(NULL, "-");
         if (token == NULL){
-            liberarJugador(&nuevo);
+            liberarJugador(&v->jugadores[v->num_jugadores]);
             continue;
         }
-        strncpy(nuevo.jugador, token, MAX_USER - 1);
-        nuevo.jugador[MAX_USER - 1] = '\0';
+        strncpy(v->jugadores[v->num_jugadores].contrasena, token, MAX_PASS - 1);
+        v->jugadores[v->num_jugadores].contrasena[MAX_PASS - 1] = '\0';
 
         token = strtok(NULL, "-");
-        if (token == NULL){
-            liberarJugador(&nuevo);
-            continue;
-        }
-        strncpy(nuevo.contrasena, token, MAX_PASS - 1);
-        nuevo.contrasena[MAX_PASS - 1] = '\0';
-
-        token = strtok(NULL, "-");
-        while (token != NULL){
-            if (!agregarObjetoAJugador(&nuevo, token)){
+        while (token != NULL) {
+            if (!agregarObjetoAJugador(&v->jugadores[v->num_jugadores], token)){
                 printf("Error de memoria al cargar inventario\n");
-                liberarJugador(&nuevo);
+                liberarJugador(&v->jugadores[v->num_jugadores]);
                 liberarJugadores(v);
                 fclose(f);
                 return 0;
@@ -117,24 +127,12 @@ int cargarJugadores(v_jugadores *v){
             token = strtok(NULL, "-");
         }
 
-        temp = realloc(v->jugadores, (v->num_jugadores + 1) * sizeof(t_jugador));
-        if (temp == NULL){
-            printf("Error de memoria\n");
-            liberarJugador(&nuevo);
-            liberarJugadores(v);
-            fclose(f);
-            return 0;
-        }
-
-        v->jugadores = temp;
-        v->jugadores[v->num_jugadores] = nuevo;
         v->num_jugadores++;
     }
 
     fclose(f);
     return v->num_jugadores;
 }
-
 
 int guardarJugadores(v_jugadores v){
     FILE *f;

@@ -3,120 +3,27 @@
 #include <stdio.h>
 #include "../include/conexiones.h"
 
-int main()
-{
-    v_conexiones conx;
-    cargarConexiones(&conx);
-    imprimirConexiones(conx);
-    liberarConexiones(&conx);
 
-    return 0;
+static void eliminarSaltoLinea(char *cadena)
+{
+    if(cadena != NULL)
+    {cadena[strcspn(cadena, "\n")] = '\0';}
 }
 
-// GESTIÓN FICHEROS ===================================================================
 
-int cargarConexiones(v_conexiones *conx)
+// GESTIÓN DE MEMORIA =================================================================
+
+void inicializarVectorConexiones(v_conexiones *conx)
 {
-    FILE *f = fopen(ARCHIVO_CONEXIONES, "r");
-    t_conexion *temp;
-    char linea[250];
-    char *token;
-    int i = 0;
-
     conx->conexiones = NULL;
     conx->num_conexiones = 0;
-
-    if(f == NULL) {printf("Error: Archivo nulo\n"); return 0;}
-
-    while(fgets(linea, 250, f) != NULL)
-    {
-        if(linea != NULL) linea[strcspn(linea, "\n")] = '\0';
-        if (strlen(linea) == 0) continue;
-
-        temp = realloc(conx->conexiones, (i + 1) * sizeof(t_conexion));
-        if(temp == NULL){
-            printf("Error al reservar memoria\n");
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-        conx->conexiones = temp;
-
-        token = strtok(linea, "-");
-        if(token == NULL){
-            printf("Error de formato en id_cnx\n");
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-        strcpy(conx->conexiones[i].id_cnx, token);
-
-        token = strtok(NULL, "-");
-        if(token == NULL){
-            printf("Error de formato en id_org\n");
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-        conx->conexiones[i].id_org = atoi(token);
-
-        token = strtok(NULL, "-");
-        if(token == NULL){
-            printf("Error de formato en id_dst\n");
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-        conx->conexiones[i].id_dst = atoi(token);
-
-        token = strtok(NULL, "-");
-        if(token == NULL){
-            printf("Error de formato en estado\n");
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-        strcpy(conx->conexiones[i].estado, token);
-
-        token = strtok(NULL, "-");
-        if(token == NULL){
-            printf("Error de formato en cond\n");
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-        strcpy(conx->conexiones[i].cond, token);
-
-        if(!conexionValida(conx->conexiones[i])){
-            printf("Conexion invalida: %s\n", conx->conexiones[i].id_cnx);
-            liberarConexiones(conx);
-            fclose(f);
-            return 0;
-        }
-
-        i++;
-    }
-
-    conx->num_conexiones = i;
-    fclose(f);
-    return 1;
 }
 
-int guardarConexiones(v_conexiones conx)
+void liberarConexiones(v_conexiones *conx)
 {
-    FILE *f = fopen(ARCHIVO_CONEXIONES, "w");
-    if (f == NULL){printf("Error: Archivo nulo\n");return 0;}
-
-    for (int i=0;i<conx.num_conexiones;i++){
-        fprintf(f, "%s-%d-%d-%s-%s\n",
-                conx.conexiones[i].id_cnx,
-                conx.conexiones[i].id_org,
-                conx.conexiones[i].id_dst,
-                conx.conexiones[i].estado,
-                conx.conexiones[i].cond);
-    }
-    fclose(f);
-    return 1;
+    free(conx->conexiones);
+    conx->conexiones = NULL;
+    conx->num_conexiones = 0;
 }
 
 
@@ -142,14 +49,91 @@ int conexionValida(t_conexion conx)
 }
 
 
-// UTILIDADES =========================================================================
+// GESTIÓN FICHEROS ===================================================================
 
-void liberarConexiones(v_conexiones *conx)
+int cargarConexiones(v_conexiones *conx)
 {
-    free(conx->conexiones);
-    conx->conexiones = NULL;
-    conx->num_conexiones = 0;
+    FILE *f = fopen(ARCHIVO_CONEXIONES, "r");
+    char linea[250];
+    char *token;
+    int i = 0;
+
+    inicializarVectorConexiones(conx);
+
+    if(f == NULL){
+        printf("Error: Archivo nulo\n");
+        return 0;
+    }
+
+    while(fgets(linea, 250, f) != NULL){
+        t_conexion *temp;
+
+        eliminarSaltoLinea(linea);
+
+        temp = realloc(conx->conexiones, (i + 1) * sizeof(t_conexion));
+        if(temp == NULL){
+            printf("Error al reservar memoria\n");
+            fclose(f);
+            return 0;
+        }
+        conx->conexiones = temp;
+
+        token = strtok(linea, "-");
+        if(token == NULL){
+            printf("Error de formato en id_cnx\n");
+            fclose(f);
+            return 0;
+        }
+        strcpy(conx->conexiones[i].id_cnx, token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en id_org\n");
+            fclose(f);
+            return 0;
+        }
+        conx->conexiones[i].id_org = atoi(token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en id_dst\n");
+            fclose(f);
+            return 0;
+        }
+        conx->conexiones[i].id_dst = atoi(token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en estado\n");
+            fclose(f);
+            return 0;
+        }
+        strcpy(conx->conexiones[i].estado, token);
+
+        token = strtok(NULL, "-");
+        if(token == NULL){
+            printf("Error de formato en cond\n");
+            fclose(f);
+            return 0;
+        }
+        strcpy(conx->conexiones[i].cond, token);
+
+        if(!conexionValida(conx->conexiones[i])){
+            printf("Conexion invalida: %s\n", conx->conexiones[i].id_cnx);
+            fclose(f);
+            return 0;
+        }
+
+        i++;
+    }
+
+    conx->num_conexiones = i;
+    fclose(f);
+    return 1;
 }
+
+
+// UTILIDADES =========================================================================
 
 int buscarConexion(int s1, int s2, v_conexiones conx)
 {
@@ -230,4 +214,5 @@ Cambios hechos en cargarConexiones:
 - Se comprueba que la línea no esté vacía antes de procesarla
 - Se comprueba el resultado de realloc para evitar pérdidas de memoria
 - Se valida cada conexión antes de agregarla al vector
+//BORRAR: Por eso ahora es tan largo, porque he ido añadiendo validaciones y comprobaciones de errores para asegurar que el programa no tenga errores y no falle ante entradas inesperadas o problemas de memoria. Además, he añadido funciones específicas para manejar las conexiones, lo que hace que el código sea más modular y fácil de mantener.
 */

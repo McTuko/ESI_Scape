@@ -6,39 +6,40 @@
 #include "../include/jugadores.h"
 #include "../include/partida.h"
 
-int main(){
-    v_salas salas;
-    cargarSalas(&salas);
-    imprimirSalas(salas);
-    liberarSalas(&salas);
 
-    return 0;
+static void eliminarSaltoLinea(char *cadena)
+{
+    if (cadena != NULL)cadena[strcspn(cadena, "\n")] = '\0';
 }
 
-// Precondición: Fichero "Salas.txt" existente con formato correcto
-// Postcondición: Estructura v_salas cargada con los datos del fichero
+
 int cargarSalas(v_salas *salas)
 {
     FILE *f = fopen(ARCHIVO_SALAS, "r");
-    t_sala *temp;
     char linea[250];
-    char *token;
     int i = 0;
 
     salas->sala = NULL;
     salas->num_salas = 0;
 
-    if (f == NULL) {printf("Error: Archivo nulo\n"); return 0;}
+    if (f == NULL){printf("Error: Archivo nulo\n"); return 0;}
 
     while (fgets(linea, 250, f) != NULL)
     {
-        if (linea != NULL)linea[strcspn(linea, "\n")] = '\0';
+        t_sala *temp;
+        char *token;
+
+        eliminarSaltoLinea(linea);
+
         if (strlen(linea) == 0) continue;
 
         temp = realloc(salas->sala, (i + 1) * sizeof(t_sala));
-        if (temp == NULL){
+        if (temp == NULL)
+        {
             printf("Error al reservar memoria\n");
-            liberarSalas(salas);
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
             fclose(f);
             return 0;
         }
@@ -48,7 +49,9 @@ int cargarSalas(v_salas *salas)
         if (token == NULL)
         {
             printf("Error de formato en id de sala\n");
-            liberarSalas(salas);
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
             fclose(f);
             return 0;
         }
@@ -58,7 +61,9 @@ int cargarSalas(v_salas *salas)
         if (token == NULL)
         {
             printf("Error de formato en nombre de sala\n");
-            liberarSalas(salas);
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
             fclose(f);
             return 0;
         }
@@ -69,7 +74,9 @@ int cargarSalas(v_salas *salas)
         if (token == NULL)
         {
             printf("Error de formato en tipo de sala\n");
-            liberarSalas(salas);
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
             fclose(f);
             return 0;
         }
@@ -80,7 +87,9 @@ int cargarSalas(v_salas *salas)
         if (token == NULL)
         {
             printf("Error de formato en descripcion de sala\n");
-            liberarSalas(salas);
+            free(salas->sala);
+            salas->sala = NULL;
+            salas->num_salas = 0;
             fclose(f);
             return 0;
         }
@@ -91,19 +100,22 @@ int cargarSalas(v_salas *salas)
     }
 
     salas->num_salas = i;
+
     fclose(f);
     return 1;
 }
 
-// Precondición: Estructura v_salas con datos válidos
-// Postcondición: Datos de la estructura guardados en el fichero con su formato correspondiente
+
 int guardarSalas(v_salas salas)
 {
     FILE *f = fopen(ARCHIVO_SALAS, "w");
-    if (f == NULL){printf("Error: Archivo nulo\n");return 0;}
+    int i;
 
-    for (int i=0;i<salas.num_salas;i++){
-        fprintf(f, "%i-%s-%s-%s\n",
+    if (f == NULL){printf("Error: Archivo nulo\n");return 0; }
+
+    for (i = 0; i < salas.num_salas; i++)
+    {
+        fprintf(f, "%02d-%s-%s-%s\n",
                 salas.sala[i].id,
                 salas.sala[i].nombre,
                 salas.sala[i].tipo,
@@ -113,8 +125,8 @@ int guardarSalas(v_salas salas)
     return 1;
 }
 
-// Precondición: Estructura v_conexiones inicializada y con datos válidos. Sala actual = s1, Sala destino = s2
-// Postcondición: Si la conexión está activa, se actualiza la sala en la partida. De lo contrario, se notifica de que la conexión está cerrada
+
+/* Pendiente de revisar más adelante */
 void entrarSala(int s1, int s2, v_conexiones conx, t_partida *partida)
 {
     int i;
@@ -122,31 +134,32 @@ void entrarSala(int s1, int s2, v_conexiones conx, t_partida *partida)
     {
         if ((conx.conexiones[i].id_org == s1) && (conx.conexiones[i].id_dst == s2))
         {
-            if (strcmp(conx.conexiones[i].estado, "Activa") == 0){partida->id_sala = s2;}
-            else printf("Conexión cerrada\n"); 
+            if (strcmp(conx.conexiones[i].estado, "Activa") == 0){partida->id_sala = s2;
+            }else printf("Conexión cerrada\n"); 
         }
     }
 }
 
-// Precondición: Estructura v_salas con datos 
-// Postcondición: Libera memoria dinámica de salas
-void liberarSalas(v_salas *salas){
+
+void liberarSalas(v_salas *salas)
+{
     free(salas->sala);
     salas->sala = NULL;
     salas->num_salas = 0;
 }
 
-// Precondición: ??
-// Postcondición: ??
+
 int buscarSalaPorId(v_salas salas, int id)
 {
-    for (int i=0;i<salas.num_salas;i++) if(salas.sala[i].id == id) return i;
-    
+    int i;
+
+    for (i = 0; i < salas.num_salas; i++)
+    {
+        if (salas.sala[i].id == id) return i;
+    }
     return -1;
 }
 
-// Precondición: Estructura t_sala con datos cargados
-// Postcondición: Imprime los datos de la sala
 void mostrarSala(t_sala sala)
 {
     printf("ID: %02d\n", sala.id);
@@ -155,8 +168,6 @@ void mostrarSala(t_sala sala)
     printf("Descripcion: %s\n", sala.desc);
 }
 
-
-// PRUEBAS============================================================================================
 void imprimirSalas(v_salas salas)
 {
     int i;
@@ -170,18 +181,35 @@ void imprimirSalas(v_salas salas)
     }
 }
 
-
 /* BITACORA ==========================================================================
 
 Las funciones guardar (estructura a fichero) funcionan correctamente
 Las funciones cargar (fichero a estructura) funcionan correctamente 
+Función describir sala terminada
 
 Borrar rewind y poner realloc por línea -> Listo
 Función liberar memoria -> Listo
 
-Control de errores en carga
 
+Corrección tipo sala: pasa de char a string ("INICIAL", "NORMAL", "SALIDA")
+Ajuste tamaños arrays:
+nombre -> 31
+desc -> 151
 
+Control de errores en carga:
+comprobación fopen, strtok y realloc
+Uso de realloc con puntero temporal -> evita pérdida de memoria
+Limpieza salto de línea -> eliminarSaltoLinea()
+Cambio a fichero "Salas.txt" según enunciado
+cargarSalas y guardarSalas devuelven int
+Adaptación a conexiones:
+conexion -> conexiones
+estado entero -> string ("Activa"/"Bloqueada")
+Corrección bucle en entrarSala
+
+Añadidas funciones:
+buscarSalaPorId()
+mostrarSala()
 
 Pendiente revisar entrarSala dentro de la lógica de partida
 

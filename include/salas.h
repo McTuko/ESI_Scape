@@ -1,23 +1,26 @@
 #ifndef SALAS_H
 #define SALAS_H
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/partida.h"
 #include "../include/conexiones.h"
+#include "../include/partida.h"
 
-#define ARCHIVO_SALAS "../ficheros/salas.txt"
-#define MAX_NOMBRE_SALA 30
-#define MAX_TIPO_SALA 7
-#define MAX_DESC_SALA 150
+
+
+#define MAX_NOMBRE_SALA 31
+#define MAX_TIPO_SALA 8
+#define MAX_DESC_SALA 151
+#define ARCHIVO_SALAS "ficheros/Salas.txt"
 
 // Estructura salas
 typedef struct
 {
     int id;
-    char nombre[MAX_NOMBRE_SALA + 1];
-    char tipo[MAX_TIPO_SALA + 1];
-    char desc[MAX_DESC_SALA + 1];
+    char nombre[MAX_NOMBRE_SALA];
+    char tipo[MAX_TIPO_SALA];      // "INICIAL", "NORMAL", "SALIDA"
+    char desc[MAX_DESC_SALA];
 } t_sala;
 
 typedef struct
@@ -27,18 +30,16 @@ typedef struct
 } v_salas;
 
 // Gestión ficheros
-int cargarSalas(v_salas*);
-int guardarSalas(v_salas);
+int cargarSalas(v_salas *salas);
+int guardarSalas(v_salas salas);
 
 // Demás
 void entrarSala(int, int, v_conexiones, t_partida*);
-void liberarSalas(v_salas*);
-void mostrarSala(t_sala);
-int buscarSalaPorId(v_salas, int);
+void liberarSalas(v_salas *salas);
+int buscarSalaPorId(v_salas salas, int id);
+void mostrarSala(t_sala sala);
 
-// PRUEBAS============================================================================================
-void inicializarSalas();
-void imprimirSalas(v_salas);
-
+// PRUEBAS
+void imprimirSalas(v_salas salas);
 
 #endif
