@@ -592,3 +592,4 @@ void menuPartida(t_partida *partida,
 
     } while (opcion != 10);
 }
+//Hola
