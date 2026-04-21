@@ -20,41 +20,60 @@ int loginORegistro(v_jugadores *jugadores)
     char pass[MAX_PASS];
     int pos;
     int opcion;
+    int continuar = 1;
 
-    printf("\nINICIO DE SESION\n");
-    printf("Usuario: ");
-    scanf("%10s", usuario);
-    limpiarBuffer();
-
-    printf("Contrasena: ");
-    scanf("%8s", pass);
-    limpiarBuffer();
-
-    pos = buscarJugadorPorUsername(*jugadores, usuario);
-
-    if (pos != -1)
+    while (continuar)
     {
-        if (strcmp(jugadores->jugadores[pos].contrasena, pass) == 0)
+        printf("\nINICIO DE SESION\n");
+        printf("Usuario: ");
+        scanf("%10s", usuario);
+        limpiarBuffer();
+
+        printf("Contrasena: ");
+        scanf("%8s", pass);
+        limpiarBuffer();
+
+        pos = buscarJugadorPorUsername(*jugadores, usuario);
+
+        if (pos != -1)
         {
-            printf("Acceso correcto. Bienvenido/a %s\n",
-                   jugadores->jugadores[pos].nomb_jugador);
-            return pos;
+            if (strcmp(jugadores->jugadores[pos].contrasena, pass) == 0)
+            {
+                printf("Acceso correcto. Bienvenido/a %s\n",
+                       jugadores->jugadores[pos].nomb_jugador);
+                return pos;
+            }
+
+            printf("Contrasena incorrecta.\n");
+            printf("1. Reintentar\n");
+            printf("2. Volver\n");
+            printf("Opcion: ");
+            scanf("%d", &opcion);
+            limpiarBuffer();
+
+            if (opcion == 2)
+            {
+                continuar = 0;
+            }
         }
+        else
+        {
+            printf("El usuario no existe.\n");
+            printf("1. Registrarse\n");
+            printf("2. Volver a intentar\n");
+            printf("Opcion: ");
+            scanf("%d", &opcion);
+            limpiarBuffer();
 
-        printf("Contrasena incorrecta.\n");
-        return -1;
-    }
-
-    printf("El usuario no existe.\n");
-    printf("1. Registrarse\n");
-    printf("2. Volver\n");
-    printf("Opcion: ");
-    scanf("%d", &opcion);
-    limpiarBuffer();
-
-    if (opcion == 1)
-    {
-        return registrarNuevoJugador(jugadores);
+            if (opcion == 1)
+            {
+                pos = registrarNuevoJugador(jugadores);
+                if (pos != -1)
+                {
+                    return pos;
+                }
+            }
+        }
     }
 
     return -1;
@@ -97,6 +116,123 @@ int registrarNuevoJugador(v_jugadores *jugadores)
     }
 
     return pos;
+}
+
+
+/* ========================= PARTIDA NUEVA / CARGADA ========================= */
+
+int buscarSalaInicial(v_salas salas)
+{
+    int i;
+
+    for (i = 0; i < salas.num_salas; i++)
+    {
+        if (strcmp(salas.sala[i].tipo, "INICIAL") == 0)
+        {
+            return salas.sala[i].id;
+        }
+    }
+
+    return -1;
+}
+
+void inicializarEstadoNuevaPartida(t_partida *partida,
+                                    int id_jugador,
+                                    int id_sala_inicial,
+                                    v_items items,
+                                    v_conexiones conx,
+                                    t_puzle *puzles,
+                                    int num_puzles)
+{
+    int i;
+
+    inicializarPartida(partida);
+
+    partida->id_jugador = id_jugador;
+    partida->id_sala = id_sala_inicial;
+    partida->datos = 1;
+
+    for (i = 0; i < items.num_items; i++)
+    {
+        actualizarObjetoPartida(partida,
+                                items.item[i].id,
+                                items.item[i].localizacion);
+    }
+
+    for (i = 0; i < conx.num_conexiones; i++)
+    {
+        actualizarConexionPartida(partida,
+                                  conx.conexiones[i].id_cnx,
+                                  conx.conexiones[i].estado);
+    }
+
+    for (i = 0; i < num_puzles; i++)
+    {
+        actualizarPuzlePartida(partida,
+                               puzles[i].id,
+                               puzles[i].resuelto);
+    }
+}
+
+void aplicarEstadoPartida(t_partida partida,
+                           v_items *items,
+                           v_conexiones *conx,
+                           t_puzle *puzles,
+                           int num_puzles,
+                           t_jugador *jugador_actual)
+{
+    int i;
+    int pos;
+
+    for (i = 0; i < partida.num_objetos; i++)
+    {
+        pos = buscarItem(items, partida.objetos[i].id_obj);
+        if (pos != -1)
+        {
+            items->item[pos].localizacion = partida.objetos[i].localizacion;
+        }
+    }
+
+    for (i = 0; i < partida.num_conexiones; i++)
+    {
+        int j;
+        for (j = 0; j < conx->num_conexiones; j++)
+        {
+            if (strcmp(conx->conexiones[j].id_cnx, partida.conexiones[i].id_cnx) == 0)
+            {
+                strcpy(conx->conexiones[j].estado, partida.conexiones[i].estado);
+            }
+        }
+    }
+
+    for (i = 0; i < partida.num_puzles; i++)
+    {
+        pos = buscarPuzlePorId(puzles, num_puzles, partida.puzles[i].id_puzle);
+        if (pos != -1)
+        {
+            puzles[pos].resuelto = partida.puzles[i].resuelto;
+        }
+    }
+
+    reconstruirInventarioJugadorDesdeItems(jugador_actual, *items);
+}
+
+void reconstruirInventarioJugadorDesdeItems(t_jugador *jugador, v_items items)
+{
+    int i;
+
+    while (jugador->num_objetos > 0)
+    {
+        quitarObjetoAJugador(jugador, jugador->inventario[0]);
+    }
+
+    for (i = 0; i < items.num_items; i++)
+    {
+        if (items.item[i].localizacion == -1)
+        {
+            agregarObjetoAJugador(jugador, items.item[i].id);
+        }
+    }
 }
 
 
