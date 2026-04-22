@@ -132,6 +132,29 @@ int cargarConexiones(v_conexiones *conx)
     return 1;
 }
 
+int guardarConexiones(v_conexiones v)
+{
+    FILE *f = fopen(ARCHIVO_CONEXIONES, "w");
+
+    if (f == NULL)
+    {
+        printf("Error: Archivo nulo\n");
+        return 0;
+    }
+
+    for (int i = 0; i < v.num_conexiones; i++)
+    {
+        fprintf(f, "%s-%02d-%02d-%s-%s\n",
+                v.conexiones[i].id_cnx,
+                v.conexiones[i].id_org,
+                v.conexiones[i].id_dst,
+                v.conexiones[i].estado,
+                v.conexiones[i].cond);
+    }
+
+    fclose(f);
+    return 1;
+}
 
 // UTILIDADES =========================================================================
 
