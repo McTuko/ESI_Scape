@@ -1,7 +1,7 @@
 01-Laboratorio-INICIAL-Cubiculo regado de mesas y herramientas
 02-Biblioteca-NORMAL-Larga sala con estanterias llenas de libros, parece que a uno se le asoma una nota
-03-Sala estudios-NORMAL-En realidad nadie estudia aquí, se han dejado una pila de libros
-04-Aula magna-NORMAL-Sillas y sillas se alzan a tu vista..
-05-Pasillo-NORMAL-Un pasillo largo y vacío
-06-Secretaría-NORMAL-Zona de trabajo. es raro pero esta llena de plumas
+03-Sala estudios-NORMAL-En realidad nadie estudia aqui, se han dejado una pila de libros
+04-Aula magna-NORMAL-Sillas y sillas se alzan a tu vista...
+05-Pasillo-NORMAL-Un pasillo largo y vacio
+06-Secretaría-NORMAL-Zona de trabajo. Es raro, pero esta llena de plumas
 07-Patio-SALIDA-Has escapado de la ESI
