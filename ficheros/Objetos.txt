@@ -1,0 +1,5 @@
+OB01-Destornillador-Herramienta puntiaguda, puede forzar cerraduras-01
+OB02-Papel [1234]-Papel escondido entre los libros. Se lee: 1234-02
+OB03-Tarjeta aula magna-Tarjeta magnetica, quizá puede abrir puertas-03
+OB04-Ganzua-Herramienta para forzar un candado-04
+OB05-Gallina-Que hace una gallina aquí?-06
