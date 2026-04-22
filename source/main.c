@@ -35,8 +35,7 @@ void portada()
 
 /* ========================= MAIN ========================= */
 
-int main(void)
-{
+int main(void){
     v_jugadores jugadores;
     v_salas salas;
     v_conexiones conexiones;
@@ -50,29 +49,25 @@ int main(void)
     int sala_inicial;
 
     /* Carga inicial de datos */
-    if (!cargarJugadores(&jugadores))
-    {
+    if (!cargarJugadores(&jugadores)){
         printf("Error al cargar Jugadores.txt\n");
         return 1;
     }
 
-    if (!cargarSalas(&salas))
-    {
+    if (!cargarSalas(&salas)){
         printf("Error al cargar Salas.txt\n");
         liberarJugadores(&jugadores);
         return 1;
     }
 
-    if (!cargarConexiones(&conexiones))
-    {
+    if (!cargarConexiones(&conexiones)){
         printf("Error al cargar Conexiones.txt\n");
         liberarJugadores(&jugadores);
         liberarSalas(&salas);
         return 1;
     }
 
-    if (!cargarItems(&items))
-    {
+    if (!cargarItems(&items)){
         printf("Error al cargar Objetos.txt\n");
         liberarJugadores(&jugadores);
         liberarSalas(&salas);
@@ -81,8 +76,7 @@ int main(void)
     }
 
     num_puzles = cargarPuzles(ARCHIVO_PUZLES, &puzles);
-    if (num_puzles == 0 && puzles == NULL)
-    {
+    if (num_puzles == 0 && puzles == NULL){
         printf("Error al cargar Puzles.txt\n");
         liberarJugadores(&jugadores);
         liberarSalas(&salas);
@@ -99,8 +93,7 @@ int main(void)
 
     /* Login o registro */
     pos_jugador = loginORegistro(&jugadores);
-    if (pos_jugador == -1)
-    {
+    if (pos_jugador == -1){
         printf("No se pudo iniciar sesion.\n");
         liberarJugadores(&jugadores);
         liberarSalas(&salas);
@@ -111,8 +104,7 @@ int main(void)
     }
 
     /* Menu principal */
-    do
-    {
+    do{
         printf("\nMENU PRINCIPAL\n");
         printf("1. Nueva partida\n");
         printf("2. Cargar partida\n");
@@ -121,12 +113,10 @@ int main(void)
         scanf("%d", &opcion_principal);
         limpiarBuffer();
 
-        switch (opcion_principal)
-        {
+        switch (opcion_principal){
             case 1:
                 sala_inicial = buscarSalaInicial(salas);
-                if (sala_inicial == -1)
-                {
+                if (sala_inicial == -1){
                     printf("No se ha encontrado una sala inicial.\n");
                     break;
                 }
@@ -153,14 +143,12 @@ int main(void)
                 break;
 
             case 2:
-                if (!cargarPartida(&partida))
-                {
+                if (!cargarPartida(&partida)){
                     printf("No se pudo cargar la partida.\n");
                     break;
                 }
 
-                if (partida.id_jugador != jugadores.jugadores[pos_jugador].id_jugador)
-                {
+                if (partida.id_jugador != jugadores.jugadores[pos_jugador].id_jugador){
                     printf("La partida guardada pertenece a otro jugador.\n");
                     liberarPartida(&partida);
                     break;

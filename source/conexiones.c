@@ -11,7 +11,7 @@ static void eliminarSaltoLinea(char *cadena)
 }
 
 
-// GESTIÓN DE MEMORIA =================================================================
+// GESTIÓN DE MEMORIA ================================================================
 
 void inicializarVectorConexiones(v_conexiones *conx)
 {
