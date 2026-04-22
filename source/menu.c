@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "../include/menu.h"
 
 
@@ -45,34 +49,13 @@ int loginORegistro(v_jugadores *jugadores)
             }
 
             printf("Contrasena incorrecta.\n");
-            int opcion_pass = 0;
-            do
-            {
-                printf("1. Reintentar\n");
-                printf("2. Volver al Login\n");
-                printf("3. Salir\n");
-                printf("Opcion: ");
-                scanf("%d", &opcion_pass);
-                limpiarBuffer();
+            printf("1. Reintentar\n");
+            printf("2. Volver\n");
+            printf("Opcion: ");
+            scanf("%d", &opcion);
+            limpiarBuffer();
 
-                switch (opcion_pass)
-                {
-                    case 1:
-                        opcion_pass = 1;
-                        break;
-                    case 2:
-                        opcion_pass = 2;
-                        break;
-                    case 3:
-                        printf("Saliendo del programa...\n");
-                        exit(0);
-                    default:
-                        printf("Opcion incorrecta.\n");
-                        break;
-                }
-            } while (opcion_pass == 0);
-
-            if (opcion_pass == 2)
+            if (opcion == 2)
             {
                 continuar = 0;
             }
@@ -153,123 +136,6 @@ int registrarNuevoJugador(v_jugadores *jugadores)
     }
 
     return pos;
-}
-
-
-/* ========================= PARTIDA NUEVA / CARGADA ========================= */
-
-int buscarSalaInicial(v_salas salas)
-{
-    int i;
-
-    for (i = 0; i < salas.num_salas; i++)
-    {
-        if (strcmp(salas.sala[i].tipo, "INICIAL") == 0)
-        {
-            return salas.sala[i].id;
-        }
-    }
-
-    return -1;
-}
-
-void inicializarEstadoNuevaPartida(t_partida *partida,
-                                    int id_jugador,
-                                    int id_sala_inicial,
-                                    v_items items,
-                                    v_conexiones conx,
-                                    t_puzle *puzles,
-                                    int num_puzles)
-{
-    int i;
-
-    inicializarPartida(partida);
-
-    partida->id_jugador = id_jugador;
-    partida->id_sala = id_sala_inicial;
-    partida->datos = 1;
-
-    for (i = 0; i < items.num_items; i++)
-    {
-        actualizarObjetoPartida(partida,
-                                items.item[i].id,
-                                items.item[i].localizacion);
-    }
-
-    for (i = 0; i < conx.num_conexiones; i++)
-    {
-        actualizarConexionPartida(partida,
-                                  conx.conexiones[i].id_cnx,
-                                  conx.conexiones[i].estado);
-    }
-
-    for (i = 0; i < num_puzles; i++)
-    {
-        actualizarPuzlePartida(partida,
-                               puzles[i].id,
-                               puzles[i].resuelto);
-    }
-}
-
-void aplicarEstadoPartida(t_partida partida,
-                           v_items *items,
-                           v_conexiones *conx,
-                           t_puzle *puzles,
-                           int num_puzles,
-                           t_jugador *jugador_actual)
-{
-    int i;
-    int pos;
-
-    for (i = 0; i < partida.num_objetos; i++)
-    {
-        pos = buscarItem(items, partida.objetos[i].id_obj);
-        if (pos != -1)
-        {
-            items->item[pos].localizacion = partida.objetos[i].localizacion;
-        }
-    }
-
-    for (i = 0; i < partida.num_conexiones; i++)
-    {
-        int j;
-        for (j = 0; j < conx->num_conexiones; j++)
-        {
-            if (strcmp(conx->conexiones[j].id_cnx, partida.conexiones[i].id_cnx) == 0)
-            {
-                strcpy(conx->conexiones[j].estado, partida.conexiones[i].estado);
-            }
-        }
-    }
-
-    for (i = 0; i < partida.num_puzles; i++)
-    {
-        pos = buscarPuzlePorId(puzles, num_puzles, partida.puzles[i].id_puzle);
-        if (pos != -1)
-        {
-            puzles[pos].resuelto = partida.puzles[i].resuelto;
-        }
-    }
-
-    reconstruirInventarioJugadorDesdeItems(jugador_actual, *items);
-}
-
-void reconstruirInventarioJugadorDesdeItems(t_jugador *jugador, v_items items)
-{
-    int i;
-
-    while (jugador->num_objetos > 0)
-    {
-        quitarObjetoAJugador(jugador, jugador->inventario[0]);
-    }
-
-    for (i = 0; i < items.num_items; i++)
-    {
-        if (items.item[i].localizacion == -1)
-        {
-            agregarObjetoAJugador(jugador, items.item[i].id);
-        }
-    }
 }
 
 
